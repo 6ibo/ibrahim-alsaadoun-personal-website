@@ -1,11 +1,14 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { ArrowDown, ArrowUpRight, ChevronLeft, ChevronRight, Github, Instagram, Menu, Music2, X, Youtube } from "lucide-react";
+import { ArrowDown, ArrowUpRight, ChevronLeft, ChevronRight, Github, Instagram, Menu, Music2, Play, X } from "lucide-react";
 import { copy, photos, projects, sitePath, socialLinks, videos, type Locale } from "@/data/content";
 
 const reveal = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0 } };
 const navIds = ["home", "about", "gallery", "content", "projects", "connect"];
+function YouTubeMark() {
+  return <svg className="youtube-mark" viewBox="0 0 24 17" aria-hidden="true" focusable="false"><rect width="24" height="17" rx="5" fill="currentColor" /><path d="M10 5.15a.8.8 0 0 0-1.2.69v5.32a.8.8 0 0 0 1.2.69l4.6-2.66a.8.8 0 0 0 0-1.38L10 5.15Z" fill="white" /></svg>;
+}
 export function Site() {
   const [locale, setLocale] = useState<Locale>("en");
   const [menuOpen, setMenuOpen] = useState(false);
@@ -15,7 +18,7 @@ export function Site() {
   const reduceMotion = useReducedMotion();
   const t = copy[locale];
   const rtl = locale === "ar";
-  const links = useMemo(() => socialLinks.map((item) => ({ ...item, icon: item.label === "YouTube" ? Youtube : item.label === "Instagram" ? Instagram : item.label === "TikTok" ? Music2 : item.label === "GitHub" ? Github : ArrowUpRight })), []);
+  const links = useMemo(() => socialLinks.map((item) => ({ ...item, icon: item.label === "YouTube" ? YouTubeMark : item.label === "Instagram" ? Instagram : item.label === "TikTok" ? Music2 : item.label === "GitHub" ? Github : ArrowUpRight })), []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -81,7 +84,6 @@ export function Site() {
 
     <section className="hero" id="home">
       <div className="hero-copy">
-        <motion.p className="eyebrow" initial="hidden" animate="visible" variants={reveal} transition={{ duration: .7 }}>IBRAHIM ALSAADOUN <span>·</span> {rtl ? "مرحباً" : "PERSONAL SPACE"}</motion.p>
         <motion.h1 initial="hidden" animate="visible" variants={reveal} transition={{ duration: .8, delay: .08 }}>{rtl ? "إبراهيم\nسعدون" : <>Ibrahim<br />Alsaadoun<span className="period">.</span></>}</motion.h1>
         <motion.p className="hero-role" initial="hidden" animate="visible" variants={reveal} transition={{ duration: .7, delay: .18 }}>{t.role}</motion.p>
         <motion.p className="hero-lead" initial="hidden" animate="visible" variants={reveal} transition={{ duration: .7, delay: .25 }}>{t.lead}</motion.p>
@@ -89,20 +91,61 @@ export function Site() {
       </div>
       <motion.div className="hero-portrait hero-brand-stage" initial={{ opacity: 0, scale: .98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: .9, ease: "easeOut" }}>
         <div className="hero-logo-crop"><img src={sitePath("/images/channel-logo.jpg")} alt={rtl ? "شعار قناة إبراهيم سعدون" : "Ibrahim Alsaadoun channel logo"} fetchPriority="high" /></div>
-        <div className="portrait-caption"><span>{rtl ? "تقنية · إبداع · كرة قدم" : "TECHNOLOGY · CREATIVITY · FOOTBALL"}</span><ArrowDown size={15} /></div>
+        <div className="portrait-caption"><span>{rtl ? "تقنية وإبداع وحكايات كرة قدم" : "Technology, creativity & football stories"}</span><ArrowDown size={15} /></div>
       </motion.div>
       <button className="scroll-cue" onClick={() => jump("about")}><span>{t.scroll}</span><ArrowDown size={15} /></button>
     </section>
 
-    <section className="about section" id="about"><div className="section-kicker">01 / {t.nav[1]}</div><div className="about-grid"><div><h2>{t.aboutTitle}</h2><p className="body-large">{t.bio}</p><button className="text-link" onClick={() => jump("connect")}>{t.nav[5]} <ArrowUpRight size={16} /></button></div>{photo(0, "about-photo")}</div></section>
+    <section className="about section" id="about"><div className="about-grid"><div><h2>{t.aboutTitle}</h2><p className="body-large">{t.bio}</p><button className="text-link" onClick={() => jump("connect")}>{t.nav[5]} <ArrowUpRight size={16} /></button></div>{photo(0, "about-photo")}</div></section>
 
-    <section className="gallery-section section" id="gallery"><div className="section-kicker">02 / {t.gallery}</div><div className="section-heading"><h2>{t.galleryTitle.split("\n").map((line) => <span key={line}>{line}<br /></span>)}</h2><p>{t.galleryIntro}</p></div><div className="gallery-grid">{photos.slice(1).map((_, index) => photo(index + 1, "gallery-item"))}</div></section>
+    <section className="gallery-section section" id="gallery"><div className="section-heading"><h2>{t.galleryTitle.split("\n").map((line) => <span key={line}>{line}<br /></span>)}</h2><p>{t.galleryIntro}</p></div><div className="gallery-grid">{photos.slice(1).map((_, index) => photo(index + 1, "gallery-item"))}</div></section>
 
-    <section className="content-section section" id="content"><div className="section-kicker">03 / {t.nav[3]}</div><div className="content-panel"><div className="content-copy"><p className="eyebrow">{rtl ? "حكايات من عالم كرة القدم" : "STORIES FROM THE WORLD OF FOOTBALL"}</p><h2>{t.contentTitle}<span className="period">.</span></h2><p>{t.contentIntro}</p><div className="football-topics">{t.footballTopics.map((topic) => <span key={topic}>{topic}</span>)}</div><a className="button light" href={socialLinks[0].href} target="_blank" rel="noreferrer">{t.youtube}<ArrowUpRight size={16} /></a></div><a className="feature-frame" href={videos[0]?.url || socialLinks[0].href} target="_blank" rel="noreferrer" aria-label={t.videoWatch}>{videos[0]?.thumbnail && <img className="feature-photo" src={sitePath(videos[0].thumbnail)} alt="" loading="lazy" />}<div className="feature-mark"><span className="play-mark">▶</span></div><span>{t.featured}</span><span className="feature-watch">{t.videoWatch}<ArrowUpRight size={15} /></span></a></div><div className="video-row">{videos.map((video, i) => <article className="video-card" key={video.src || video.url || i}><a className="video-thumb video-thumb-link" href={video.url || socialLinks[0].href} target="_blank" rel="noreferrer" aria-label={video.title[locale]}>{video.thumbnail ? <img src={sitePath(video.thumbnail)} alt="" loading="lazy" /> : <span>▶</span>}<span className="video-play">▶</span></a><div className="video-title"><span>{video.title[locale]}<small>{video.platform[locale]}</small></span><a className="video-watch" href={video.url || socialLinks[0].href} target="_blank" rel="noreferrer"><Youtube size={15} />{t.videoWatch}<ArrowUpRight size={15} /></a></div>{video.src && <details className="local-video-details"><summary>{t.localVideo}</summary><video controls playsInline preload="none" aria-label={video.title[locale]}><source src={sitePath(video.src)} type="video/mp4" />{rtl ? "المتصفح لا يدعم تشغيل الفيديو." : "Your browser does not support video."}</video></details>}</article>)}</div></section>
+    <section className="content-section section" id="content">
+      <div className="content-panel">
+        <div className="content-copy">
+          <h2>{t.contentTitle}<span className="period">.</span></h2>
+          <p>{t.contentIntro}</p>
+          <div className="football-topics">{t.footballTopics.map((topic) => <span key={topic}>{topic}</span>)}</div>
+        </div>
+        <a className="feature-frame" href={videos[0]?.url || socialLinks[0].href} target="_blank" rel="noreferrer" aria-label={videos[0]?.title[locale] || t.videoWatch}>
+          {videos[0]?.thumbnail && <img className="feature-photo" src={videos[0].thumbnail.startsWith("http") ? videos[0].thumbnail : sitePath(videos[0].thumbnail)} alt="" loading="lazy" />}
+          <span className="feature-topline"><YouTubeMark />{t.featured}</span>
+          <span className="feature-play"><Play size={25} fill="currentColor" /></span>
+          <span className="feature-caption">{videos[0]?.title[locale]}<small>{t.videoWatch}<ArrowUpRight size={15} /></small></span>
+        </a>
+      </div>
+      <div className="channel-callout">
+        <div className="channel-copy-block">
+          <div className="channel-identity">
+            <span className="channel-profile-copy"><strong>{t.channelName}</strong><span>{t.channelHandle}</span></span>
+          </div>
+          <p>{t.channelPitch}</p>
+          <a className="button dark channel-button" href={socialLinks[0].href} target="_blank" rel="noreferrer">{t.youtube}<ArrowUpRight size={16} /></a>
+        </div>
+        <a className="channel-emblem" href={socialLinks[0].href} target="_blank" rel="noreferrer" aria-label={t.channelInvite}>
+          <span className="channel-preview">
+            {videos[0]?.thumbnail && <img src={videos[0].thumbnail.startsWith("http") ? videos[0].thumbnail : sitePath(videos[0].thumbnail)} alt="" loading="lazy" />}
+            <span className="channel-preview-shade" />
+            <span className="channel-preview-top"><YouTubeMark /><span>{t.channelEyebrow}</span></span>
+            <span className="channel-preview-play"><Play size={24} fill="currentColor" /></span>
+            <span className="channel-preview-profile"><span><strong>{t.channelName}</strong><small>{t.channelHandle}</small></span><ArrowUpRight size={17} /></span>
+          </span>
+          <span className="channel-emblem-label">{t.channelInvite}<ArrowUpRight size={16} /></span>
+        </a>
+      </div>
+      <div className="video-row-heading"><h3>{t.shortsHeading}</h3><a href={socialLinks[0].href} target="_blank" rel="noreferrer">{t.youtube}<ArrowUpRight size={15} /></a></div>
+      <div className="video-row">{videos.map((video) => <article className="video-card" key={video.url}>
+        <a className="video-thumb video-thumb-link" href={video.url || socialLinks[0].href} target="_blank" rel="noreferrer" aria-label={video.title[locale]}>
+          {video.thumbnail ? <img src={video.thumbnail.startsWith("http") ? video.thumbnail : sitePath(video.thumbnail)} alt="" loading="lazy" /> : <span>▶</span>}
+          <span className="video-play"><Play size={18} fill="currentColor" /></span>
+        </a>
+        <div className="video-title"><span>{video.title[locale]}<small>{video.platform[locale]}</small></span><a className="video-watch" href={video.url || socialLinks[0].href} target="_blank" rel="noreferrer"><YouTubeMark />{t.videoWatch}<ArrowUpRight size={15} /></a></div>
+      </article>)}</div>
+    </section>
 
-    <section className="projects-section section" id="projects"><div className="section-kicker">04 / {t.nav[4]}</div><div className="section-heading project-heading"><h2>{t.projectsTitle}</h2><p>{t.projectsIntro}</p></div><div className="project-grid">{projects.length ? projects.map((project) => <a href={sitePath(`/projects/${project.slug}/`)} className="project-card" key={project.slug}><div className="project-cover">{project.cover ? <img src={sitePath(project.cover)} alt="" loading="lazy" /> : <span>{t.projectPlaceholder}</span>}<span className="project-arrow"><ArrowUpRight /></span></div><h3>{project.title[locale]}</h3><p>{project.description[locale]}</p><small>{project.technologies.join(" · ")}</small></a>) : <div className="empty-project"><span className="empty-icon">✳</span><p>{t.emptyProject}</p><span>{t.placeholder}</span></div>}</div></section>
+    <section className="projects-section section" id="projects"><div className="section-heading project-heading"><h2>{t.projectsTitle}</h2><p>{t.projectsIntro}</p></div><div className="project-grid">{projects.length ? projects.map((project) => <a href={sitePath(`/projects/${project.slug}/`)} className="project-card" key={project.slug}><div className="project-cover">{project.cover ? <img src={sitePath(project.cover)} alt="" loading="lazy" /> : <span>{t.projectPlaceholder}</span>}<span className="project-arrow"><ArrowUpRight /></span></div><h3>{project.title[locale]}</h3><p>{project.description[locale]}</p><small>{project.technologies.join(" · ")}</small></a>) : <div className="empty-project"><span className="empty-icon">✳</span><p>{t.emptyProject}</p></div>}</div></section>
 
-    <section className="connect-section section" id="connect"><div className="section-kicker">05 / {t.nav[5]}</div><div className="connect-layout"><div><h2>{t.connectTitle}</h2><p>{t.connectIntro}</p></div><div className="social-list">{links.map(({ label, href, icon: Icon }) => <a key={label} href={href || undefined} aria-disabled={!href} onClick={!href ? (e) => e.preventDefault() : undefined}><span className="social-icon"><Icon size={19} /></span><span>{label}</span>{href ? <ArrowUpRight size={18} /> : <small>{t.placeholder}</small>}</a>)}</div></div></section>
+    <section className="connect-section section" id="connect"><div className="connect-layout"><div><h2>{t.connectTitle}</h2><p>{t.connectIntro}</p></div><div className="social-list">{links.map(({ label, href, icon: Icon }) => <a key={label} href={href || undefined} aria-disabled={!href} onClick={!href ? (e) => e.preventDefault() : undefined}><span className="social-icon">{label === "YouTube" ? <YouTubeMark /> : <Icon size={19} />}</span><span>{label}</span>{href ? <ArrowUpRight size={18} /> : <small>{t.placeholder}</small>}</a>)}</div></div></section>
     <footer className="footer"><span>© {new Date().getFullYear()} Ibrahim Alsaadoun</span><span>{t.footer}</span><button onClick={() => jump("home")}>↑</button></footer>
 
     <AnimatePresence>{activePhoto !== null && <motion.div className="lightbox" role="dialog" aria-modal="true" aria-label={t.gallery} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setActivePhoto(null)}><button className="lightbox-close" onClick={() => setActivePhoto(null)} aria-label="Close"><X /></button><button className="lightbox-prev" aria-label="Previous image" onClick={(e) => { e.stopPropagation(); setActivePhoto((activePhoto - 1 + photos.length) % photos.length); }}><ChevronLeft /></button><div className="lightbox-image" onClick={(e) => e.stopPropagation()}>{photos[activePhoto].src ? <img src={sitePath(photos[activePhoto].src)} alt={photos[activePhoto].label[locale]} /> : <div className="portrait-placeholder"><span className="portrait-monogram">إ</span><span>{t.placeholder}</span></div>}<p>{photos[activePhoto].label[locale]}</p></div><button className="lightbox-next" aria-label="Next image" onClick={(e) => { e.stopPropagation(); setActivePhoto((activePhoto + 1) % photos.length); }}><ChevronRight /></button></motion.div>}</AnimatePresence>

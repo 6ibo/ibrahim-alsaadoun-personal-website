@@ -8,3 +8,5 @@ out
 .openai/
 .env
 .env.*
+
+.sites-source/
