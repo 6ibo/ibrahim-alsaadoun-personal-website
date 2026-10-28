@@ -13,6 +13,7 @@ export const copy = {
     contentTitle: "The stories behind the game", contentIntro: "I create Arabic football content about the players, turning points, rivalries, and unforgettable moments that make the game more than 90 minutes.",
     projectsTitle: "Things I’m building.", projectsIntro: "A place for experiments, ideas, and digital projects as they take shape.",
     connectTitle: "Let’s stay connected.", connectIntro: "Find me around the internet.",
+    profileVisit: "Visit profile", accountName: "Ibrahim Alsaadoun",
     placeholder: "Not added yet", emptyProject: "I’ll share personal projects here as they’re ready.", videoWatch: "Watch on YouTube", footballTopics: ["Player stories", "Iconic moments", "Rivalries", "Transfers"],
     channelEyebrow: "Football, through my lens", channelName: "Ibrahim Alsaadoun", channelHandle: "@ibrahimalsadon", channelPitch: "Short Arabic stories about football’s biggest characters and moments. Watch a video, then come along for the next story.", channelInvite: "Watch my football stories", shortsHeading: "Stories worth a replay", shortsLabel: "ON YOUTUBE",
     viewProject: "View project", youtube: "Visit my YouTube channel", featured: "Featured work", gallery: "Photography",
@@ -29,6 +30,7 @@ export const copy = {
     contentTitle: "الحكاية خلف كل لقطة", contentIntro: "أصنع محتوى رياضيًا بالعربية عن اللاعبين واللحظات الفاصلة والخصومات الكروية؛ لأن كرة القدم أكبر من تسعين دقيقة.",
     projectsTitle: "أشياء أعمل على بنائها.", projectsIntro: "مساحة للتجارب والأفكار والمشاريع الرقمية حين تكتمل ملامحها.",
     connectTitle: "لنبقَ على تواصل.", connectIntro: "يمكنك أن تجدني على الإنترنت.",
+    profileVisit: "زيارة الحساب", accountName: "إبراهيم سعدون",
     placeholder: "لم يُضف بعد", emptyProject: "سأشارك هنا مشاريعي الشخصية عندما تصبح جاهزة.", videoWatch: "شاهد على يوتيوب", footballTopics: ["قصص اللاعبين", "لحظات لا تُنسى", "الخصومات", "الانتقالات"],
     channelEyebrow: "كرة القدم كما أراها", channelName: "إبراهيم سعدون", channelHandle: "@ibrahimalsadon", channelPitch: "حكايات رياضية قصيرة بالعربية عن أبرز نجوم كرة القدم ولحظاتها. شاهد قصة، وكن قريبًا من الحكاية القادمة.", channelInvite: "شاهد حكاياتي الكروية", shortsHeading: "حكايات تستحق المشاهدة", shortsLabel: "على يوتيوب",
     viewProject: "عرض المشروع", youtube: "زيارة قناتي على يوتيوب", featured: "أعمال مختارة", gallery: "التصوير",
@@ -51,6 +53,6 @@ export const videos: { title: Record<Locale, string>; platform: Record<Locale, s
   { title: { en: "Haaland to Barcelona? Laporta’s unexpected plan", ar: "هالاند إلى برشلونة؟ خطة لابورتا بسبب أزمة مانشستر سيتي 😳🔥" }, platform: { en: "YouTube Short · Transfer story", ar: "Short يوتيوب · قصة انتقالات" }, thumbnail: "https://i.ytimg.com/vi/6gu6RyLVj1E/hqdefault.jpg", url: "https://www.youtube.com/shorts/6gu6RyLVj1E" }
 ];
 export const socialLinks = [
-  { label: "YouTube", href: "https://www.youtube.com/@ibrahimalsadon" }, { label: "Instagram", href: "https://www.instagram.com/ibrahimalsadon/?hl=en" }, { label: "TikTok", href: "https://www.tiktok.com/@ibrahimalsadon" },
+  { label: "YouTube", handle: "@ibrahimalsadon", href: "https://www.youtube.com/@ibrahimalsadon" }, { label: "Instagram", handle: "@ibrahimalsadon", href: "https://www.instagram.com/ibrahimalsadon/?hl=en" }, { label: "TikTok", handle: "@ibrahimalsadon", href: "https://www.tiktok.com/@ibrahimalsadon" },
   { label: "GitHub", href: "https://github.com/6ibo" }
 ];

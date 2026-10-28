@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type PointerEvent } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowDown, ArrowUpRight, ChevronLeft, ChevronRight, Github, Instagram, Menu, Music2, Play, X } from "lucide-react";
 import { copy, photos, projects, sitePath, socialLinks, videos, type Locale } from "@/data/content";
@@ -65,6 +65,22 @@ export function Site() {
     return () => { document.removeEventListener("keydown", onKey); document.body.style.overflow = ""; };
   }, [activePhoto]);
   const jump = (id: string) => { setMenuOpen(false); document.getElementById(id)?.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth" }); };
+  const tiltStage = (event: PointerEvent<HTMLElement>) => {
+    if (reduceMotion || event.pointerType !== "mouse" || !window.matchMedia("(hover: hover) and (pointer: fine)").matches) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - .5;
+    const y = (event.clientY - rect.top) / rect.height - .5;
+    event.currentTarget.style.setProperty("--tilt-x", `${-y * 5}deg`);
+    event.currentTarget.style.setProperty("--tilt-y", `${x * 5}deg`);
+    event.currentTarget.style.setProperty("--glow-x", `${(x + .5) * 100}%`);
+    event.currentTarget.style.setProperty("--glow-y", `${(y + .5) * 100}%`);
+  };
+  const resetStage = (event: PointerEvent<HTMLElement>) => {
+    event.currentTarget.style.setProperty("--tilt-x", "0deg");
+    event.currentTarget.style.setProperty("--tilt-y", "0deg");
+    event.currentTarget.style.setProperty("--glow-x", "50%");
+    event.currentTarget.style.setProperty("--glow-y", "50%");
+  };
   const photo = (index: number, className = "") => {
     const item = photos[index];
     return <button key={item.id} aria-label={`${t.gallery}: ${item.label[locale]}`} className={`photo-tile ${item.shape} ${className}`} onClick={() => setActivePhoto(index)} onMouseMove={(event) => { const rect = event.currentTarget.getBoundingClientRect(); event.currentTarget.style.setProperty("--shift-x", `${((event.clientX - rect.left) / rect.width - .5) * 7}px`); event.currentTarget.style.setProperty("--shift-y", `${((event.clientY - rect.top) / rect.height - .5) * 7}px`); }} onMouseLeave={(event) => { event.currentTarget.style.setProperty("--shift-x", "0px"); event.currentTarget.style.setProperty("--shift-y", "0px"); }}>
@@ -89,7 +105,7 @@ export function Site() {
         <motion.p className="hero-lead" initial="hidden" animate="visible" variants={reveal} transition={{ duration: .7, delay: .25 }}>{t.lead}</motion.p>
         <motion.div className="hero-buttons" initial="hidden" animate="visible" variants={reveal} transition={{ duration: .7, delay: .32 }}><button className="button dark" onClick={() => jump("about")}>{t.story}<ArrowUpRight size={16} /></button><button className="button plain" onClick={() => jump("projects")}>{t.work}<ArrowUpRight size={16} /></button></motion.div>
       </div>
-      <motion.div className="hero-portrait hero-brand-stage" initial={{ opacity: 0, scale: .98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: .9, ease: "easeOut" }}>
+      <motion.div className="hero-portrait hero-brand-stage" onPointerMove={tiltStage} onPointerLeave={resetStage} initial={{ opacity: 0, scale: .98 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: .9, ease: "easeOut" }}>
         <div className="hero-logo-crop"><img src={sitePath("/images/channel-logo.jpg")} alt={rtl ? "شعار قناة إبراهيم سعدون" : "Ibrahim Alsaadoun channel logo"} fetchPriority="high" /></div>
         <div className="portrait-caption"><span>{rtl ? "تقنية وإبداع وحكايات كرة قدم" : "Technology, creativity & football stories"}</span><ArrowDown size={15} /></div>
       </motion.div>
@@ -116,36 +132,16 @@ export function Site() {
       </div>
       <div className="channel-callout">
         <div className="channel-copy-block">
-          <div className="channel-identity">
-            <span className="channel-profile-copy"><strong>{t.channelName}</strong><span>{t.channelHandle}</span></span>
-          </div>
+          <div className="channel-identity"><span className="channel-profile-copy"><strong>{t.channelName}</strong><span>{t.channelHandle}</span></span></div>
           <p>{t.channelPitch}</p>
-          <a className="button dark channel-button" href={socialLinks[0].href} target="_blank" rel="noreferrer">{t.youtube}<ArrowUpRight size={16} /></a>
         </div>
-        <a className="channel-emblem" href={socialLinks[0].href} target="_blank" rel="noreferrer" aria-label={t.channelInvite}>
-          <span className="channel-preview">
-            {videos[0]?.thumbnail && <img src={videos[0].thumbnail.startsWith("http") ? videos[0].thumbnail : sitePath(videos[0].thumbnail)} alt="" loading="lazy" />}
-            <span className="channel-preview-shade" />
-            <span className="channel-preview-top"><YouTubeMark /><span>{t.channelEyebrow}</span></span>
-            <span className="channel-preview-play"><Play size={24} fill="currentColor" /></span>
-            <span className="channel-preview-profile"><span><strong>{t.channelName}</strong><small>{t.channelHandle}</small></span><ArrowUpRight size={17} /></span>
-          </span>
-          <span className="channel-emblem-label">{t.channelInvite}<ArrowUpRight size={16} /></span>
-        </a>
+        <a className="button dark channel-button" href={socialLinks[0].href} target="_blank" rel="noreferrer"><YouTubeMark />{t.youtube}<ArrowUpRight size={16} /></a>
       </div>
-      <div className="video-row-heading"><h3>{t.shortsHeading}</h3><a href={socialLinks[0].href} target="_blank" rel="noreferrer">{t.youtube}<ArrowUpRight size={15} /></a></div>
-      <div className="video-row">{videos.map((video) => <article className="video-card" key={video.url}>
-        <a className="video-thumb video-thumb-link" href={video.url || socialLinks[0].href} target="_blank" rel="noreferrer" aria-label={video.title[locale]}>
-          {video.thumbnail ? <img src={video.thumbnail.startsWith("http") ? video.thumbnail : sitePath(video.thumbnail)} alt="" loading="lazy" /> : <span>▶</span>}
-          <span className="video-play"><Play size={18} fill="currentColor" /></span>
-        </a>
-        <div className="video-title"><span>{video.title[locale]}<small>{video.platform[locale]}</small></span><a className="video-watch" href={video.url || socialLinks[0].href} target="_blank" rel="noreferrer"><YouTubeMark />{t.videoWatch}<ArrowUpRight size={15} /></a></div>
-      </article>)}</div>
     </section>
 
     <section className="projects-section section" id="projects"><div className="section-heading project-heading"><h2>{t.projectsTitle}</h2><p>{t.projectsIntro}</p></div><div className="project-grid">{projects.length ? projects.map((project) => <a href={sitePath(`/projects/${project.slug}/`)} className="project-card" key={project.slug}><div className="project-cover">{project.cover ? <img src={sitePath(project.cover)} alt="" loading="lazy" /> : <span>{t.projectPlaceholder}</span>}<span className="project-arrow"><ArrowUpRight /></span></div><h3>{project.title[locale]}</h3><p>{project.description[locale]}</p><small>{project.technologies.join(" · ")}</small></a>) : <div className="empty-project"><span className="empty-icon">✳</span><p>{t.emptyProject}</p></div>}</div></section>
 
-    <section className="connect-section section" id="connect"><div className="connect-layout"><div><h2>{t.connectTitle}</h2><p>{t.connectIntro}</p></div><div className="social-list">{links.map(({ label, href, icon: Icon }) => <a key={label} href={href || undefined} aria-disabled={!href} onClick={!href ? (e) => e.preventDefault() : undefined}><span className="social-icon">{label === "YouTube" ? <YouTubeMark /> : <Icon size={19} />}</span><span>{label}</span>{href ? <ArrowUpRight size={18} /> : <small>{t.placeholder}</small>}</a>)}</div></div></section>
+    <section className="connect-section section" id="connect"><div className="connect-layout"><div className="connect-intro"><h2>{t.connectTitle}</h2><p>{t.connectIntro}</p><a className="github-link" href={socialLinks.find(({label}) => label === "GitHub")?.href} target="_blank" rel="noreferrer"><Github size={17} /> GitHub <ArrowUpRight size={15} /></a></div><div className="social-cards">{links.filter(({ label }) => ["YouTube", "Instagram", "TikTok"].includes(label)).map(({ label, href, handle, icon: Icon }) => <a className={`social-card social-card-${label.toLowerCase()}`} key={label} href={href || undefined} target="_blank" rel="noreferrer" aria-label={`${t.profileVisit}: ${label} ${handle}`}><span className="social-card-cover"><span className="social-card-icon">{label === "YouTube" ? <YouTubeMark /> : <Icon size={27} strokeWidth={1.8} />}</span></span><span className="social-card-profile"><img src={sitePath("/images/channel-logo.jpg")} alt="" loading="lazy" /><span className="social-card-account"><strong>{t.accountName}</strong><small>{handle}</small></span></span><span className="social-card-bottom"><span className="social-card-label">{label}</span><span className="social-card-visit">{t.profileVisit}<ArrowUpRight size={15} /></span></span></a>)}</div></div></section>
     <footer className="footer"><span>© {new Date().getFullYear()} Ibrahim Alsaadoun</span><span>{t.footer}</span><button onClick={() => jump("home")}>↑</button></footer>
 
     <AnimatePresence>{activePhoto !== null && <motion.div className="lightbox" role="dialog" aria-modal="true" aria-label={t.gallery} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setActivePhoto(null)}><button className="lightbox-close" onClick={() => setActivePhoto(null)} aria-label="Close"><X /></button><button className="lightbox-prev" aria-label="Previous image" onClick={(e) => { e.stopPropagation(); setActivePhoto((activePhoto - 1 + photos.length) % photos.length); }}><ChevronLeft /></button><div className="lightbox-image" onClick={(e) => e.stopPropagation()}>{photos[activePhoto].src ? <img src={sitePath(photos[activePhoto].src)} alt={photos[activePhoto].label[locale]} /> : <div className="portrait-placeholder"><span className="portrait-monogram">إ</span><span>{t.placeholder}</span></div>}<p>{photos[activePhoto].label[locale]}</p></div><button className="lightbox-next" aria-label="Next image" onClick={(e) => { e.stopPropagation(); setActivePhoto((activePhoto + 1) % photos.length); }}><ChevronRight /></button></motion.div>}</AnimatePresence>
